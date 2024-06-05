@@ -1,0 +1,104 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+
+body {
+    margin: 0;
+}
+
+* {
+    font-family: "Poppins", sans-serif;
+}
+
+.card-tasks-home{
+    border-top-right-radius: 35px !important;
+    border-top-left-radius: 35px !important;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    box-shadow: 1px 0px 20px rgba(0, 0, 0, 0.2) !important;
+    background-color: white !important;
+    margin: 60px auto auto !important;
+}
+
+:deep(.p-checkbox .p-checkbox-input){
+    border-radius: 50% !important;
+}
+
+.p-button{
+    background: #7289DA !important;
+    border-radius: 8px !important;
+    width: 100% !important;
+    border: 1px solid #7995f5 !important;
+}
+
+.p-button:hover{
+    box-shadow: 2px 1px 9px rgba(0, 0, 0, 0.2) !important;
+}
+
+:deep(.p-calendar){
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 12px !important;
+}
+:deep(.p-inputtext) {
+    border-radius: 12px !important;
+}
+
+:deep(.p-dropdown-panel .p-dropdown-items .p-dropdown-item.p-highlight) {
+    background: #c6d4ec !important;
+    color: #1AA3E5 !important;
+}
+
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item.p-highlight{
+    background: #c6d4ec !important;
+    color: #1AA3E5 !important;
+}
+
+:deep(.p-datepicker table td.p-datepicker-today > span.p-highlight){
+    background: #c6d4ec !important;
+    color: #1AA3E5 !important;
+}
+
+.p-datepicker table td.p-datepicker-today > span.p-highlight{
+    background: #c6d4ec !important;
+    color: #1AA3E5 !important;
+}
+
+.p-datepicker table td > span:focus{
+    outline: 1px solid #1AA3E5 !important;
+}
+
+.p-datepicker table td > span.p-highlight{
+    background: #c6d4ec !important;
+    color: #1AA3E5 !important;
+}
+
+.p-datepicker .p-monthpicker .p-monthpicker-month.p-highlight{
+    background: #c6d4ec !important;
+    color: #1AA3E5 !important;
+    outline: 1px solid #1AA3E5 !important;
+}
+
+.p-datepicker .p-yearpicker .p-yearpicker-year.p-highlight{
+    background: #c6d4ec !important;
+    color: #1AA3E5 !important;
+    outline: 1px solid #1AA3E5 !important;
+}
+
+:deep(.p-inputtext:focus) {
+    outline: 1px solid #3498db;
+}
+
+:deep(.p-dropdown) {
+    width: 100% !important;
+    height: 100% !important;
+    align-items: center !important;
+    border-radius: 12px !important;
+}
+:deep(.p-dropdown-items){
+    padding-left: 4px !important;
+}
+
+.p-dropdown-items-wrapper > ul {
+    padding-left: 4px !important;
+}
