@@ -21,7 +21,7 @@
         </b-row>
       </b-colxx>
     </b-row>
-    <Dialog :visible.sync="showModal" style="width: 50vw" modal closable>
+    <Dialog :visible.sync="showModal" class="modal-class" style="width: 50vw" modal closable>
       <template #header>
         <h3>{{ editingTask ? 'Edit Task' : 'Add New Task' }}</h3>
       </template>
@@ -32,7 +32,7 @@
             <InputText style="width: 100%" v-model="input.value" :class="{ 'invalid-field': !input.isValid }" @input="input.isValid = true" />
           </template>
           <template v-else-if="input.type === 'TextArea'">
-            <Button label="IA Generation" icon="pi pi-bolt" @click="generateDescription" style="margin-bottom: 10px; margin-top: 10px;" />
+            <Button label="IA Generation" icon="pi pi-bolt" @click="generateDescription" class="animated-border-button" v-if="!inputsModal.find(input => input.key === 'description').value" style="position: absolute; width: 200px !important; margin-top: 35px; left: 32px;" />
             <label>{{ input.label }}</label>
             <Textarea style="width: 100%" v-model="input.value" :class="{ 'invalid-field': !input.isValid }" @input="input.isValid = true" rows="5" />
           </template>
@@ -56,12 +56,11 @@
 
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { useStore, mapActions, mapState } from 'vuex';
+import { defineComponent } from "vue";
+import { mapActions, mapState } from "vuex";
 import BColxx from "@/components/Common/Colxx.vue";
 import TaskCard from "@/components/Common/TaskCard.vue";
 import CardInfoTasks from "@/components/Common/CardInfoTasks.vue";
-import { format, parseISO } from 'date-fns';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 interface Task {
@@ -204,41 +203,66 @@ export default defineComponent({
       this.inputsModal.find(field => field.key === 'description')!.value = text;
     },
     async generateDescription() {
-      const title = this.inputsModal.find(field => field.key === 'title')!.value;
-      if (title) {
-        const description = await this.fetchTaskDescription(title);
-        this.inputsModal.find(field => field.key === 'description')!.value = description;
+      const titleField = this.inputsModal.find(field => field.key === 'title');
+      if (titleField?.value) {
+        this.inputsModal.find(field => field.key === 'description')!.value = await this.fetchTaskDescription(titleField.value);
       } else {
         console.log("Title is required to generate description");
+        titleField!.isValid = false; // Set the title field as invalid
       }
+    },
+    formatDate(date: string): string {
+      const d = new Date(date);
+      const day = d.getDate().toString().padStart(2, '0');
+      const month = (d.getMonth() + 1).toString().padStart(2, '0');
+      const year = d.getFullYear().toString();
+      return `${day}/${month}/${year}`;
+    },
+    formatTime(date: string): string {
+      const d = new Date(date);
+      const hours = d.getHours().toString().padStart(2, '0');
+      const minutes = d.getMinutes().toString().padStart(2, '0');
+      return `${hours}:${minutes}`;
     },
     async saveTaskAction() {
       if (this.validateInputs()) {
-        const dateField = this.inputsModal.find(field => field.key === 'date');
-        const hourField = this.inputsModal.find(field => field.key === 'hour');
-        const date = dateField ? dateField.value : this.originalDate;
-        const hour = hourField ? hourField.value : this.originalHour;
-
-        const title = this.inputsModal.find(field => field.key === 'title')!.value;
-        const description = this.inputsModal.find(field => field.key === 'description')!.value;
+        const date = this.inputsModal.find(field => field.key === 'date')!.value || this.originalDate;
+        const hour = this.inputsModal.find(field => field.key === 'hour')!.value || this.originalHour;
 
         const task: Task = {
           id: this.currentTaskId || Date.now(),
-          title: title,
-          description: description,
-          date: date ? format(parseISO(date), 'dd/MM/yyyy') : this.originalDate,
-          hour: hour !== this.originalHour ? format(parseISO(hour), 'HH:mm') : this.originalHour,
+          title: this.inputsModal.find(field => field.key === 'title')!.value,
+          description: this.inputsModal.find(field => field.key === 'description')!.value,
+          date: date ? this.formatDate(date) : this.originalDate,
+          hour: hour ? this.formatTime(hour) : this.originalHour,
           type: this.inputsModal.find(field => field.key === 'select')!.value.value,
           state: this.editingTask ? this.tasks.find((t: Task) => t.id === this.currentTaskId)?.state || 'todo' : 'todo'
         };
 
-        this.saveTask(task);
+        if (this.editingTask && this.currentTaskId !== null) {
+          const tasksString = localStorage.getItem('tasks');
+          let tasks: Task[] = tasksString ? JSON.parse(tasksString) : [];
+          const taskIndex = tasks.findIndex((t: Task) => t.id === this.currentTaskId);
+
+          if (taskIndex !== -1) {
+            tasks[taskIndex] = task;
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+          }
+        } else {
+          const tasksString = localStorage.getItem('tasks');
+          let tasks: Task[] = tasksString ? JSON.parse(tasksString) : [];
+          tasks.push(task);
+          localStorage.setItem('tasks', JSON.stringify(tasks));
+        }
+
         this.showModal = false;
         this.resetTaskForm();
+        this.updateTasks();
       } else {
         console.log("Validation failed");
       }
     },
+
     resetTaskForm() {
       this.inputsModal.forEach(field => {
         field.value = '';
@@ -271,7 +295,7 @@ export default defineComponent({
       if (descriptionField) descriptionField.value = task.description;
       if (dateField) dateField.value = task.date;
       if (hourField) hourField.value = task.hour;
-      if (typeField) typeField.value = task.type;
+      if (typeField) typeField.value = { name: task.type, value: task.type }; // Set the correct value
 
       this.currentTaskId = task.id;
       this.originalDate = task.date;
@@ -306,9 +330,45 @@ export default defineComponent({
   border: 1px dashed #cdcdcd;
   border-radius: 12px;
 }
+.animated-border-button {
+  margin-bottom: 10px;
+  margin-top: 10px;
+  border: 2px solid transparent;
+  background-image: linear-gradient(var(--button-color, #fff), var(--button-color, #fff)), radial-gradient(circle at top left, #ff7a18, #f64f59);
+  background-origin: border-box;
+  background-clip: content-box, border-box;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.15);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.animated-border-button:hover {
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+  transform: translateY(-2px);
+}
+
+.animated-border-button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(60deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0), rgba(255, 255, 255, 0));
+  clip-path: polygon(-20% 0, 100% 0%, 80% 100%, 0% 100%);
+  transition: all 0.7s ease-out;
+  transform: translateX(-100%);
+  z-index: 0;
+}
+
+.animated-border-button:hover::before {
+  transform: translateX(100%);
+}
 @media screen and (max-width: 991px) {
   .card-tasks-home{
     margin: 150px auto auto !important;
   }
 }
+
 </style>

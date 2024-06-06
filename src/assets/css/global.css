@@ -73,6 +73,12 @@ body {
     color: #1AA3E5 !important;
 }
 
+@media screen and (max-width: 620px) {
+    .p-dialog{
+        width: 85vw !important;
+    }
+}
+
 .p-datepicker .p-monthpicker .p-monthpicker-month.p-highlight{
     background: #c6d4ec !important;
     color: #1AA3E5 !important;
