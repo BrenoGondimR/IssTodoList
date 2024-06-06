@@ -1,8 +1,8 @@
 <template>
   <div class="full-screen-container">
-    <b-row style="padding: 20px">
+    <b-row style="padding: 20px; height: 100%; margin: 0;">
       <b-colxx lg="12">
-        <p class="message-box">Hi, {{ username }}<br>Good Morning!</p>
+        <p class="message-box">Hi, Welcome To Your Todo List</p>
       </b-colxx>
       <b-colxx lg="6" class="col-card-infos">
         <CardInfoTasks
@@ -37,10 +37,11 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 2px 0 25px rgba(0, 0, 0, 0.3) !important;
   background: #7289DA;
   border-bottom-left-radius: 50% 20%;
   border-bottom-right-radius: 50% 20%;
-  height: 300px; /* ajuste a altura conforme necessário */
+  height: 300px;
   width: 100%;
 }
 

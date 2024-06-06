@@ -17,8 +17,8 @@
       </div>
     </div>
     <div class="task-actions">
-      <i class="pi pi-pencil" @click="editTask" style="margin: auto 5px; cursor: pointer;"></i>
-      <i class="pi pi-trash" @click="deleteTask" style="margin: auto 5px; cursor: pointer;"></i>
+      <i class="pi pi-pencil" @click="editTask" style="margin: auto 5px; cursor: pointer !important;"></i>
+      <i class="pi pi-trash" @click="deleteTask" style="margin: auto 5px; cursor: pointer !important;"></i>
     </div>
   </div>
 </template>
@@ -39,6 +39,10 @@ export default defineComponent({
       required: true
     },
     taskName: {
+      type: String as PropType<string>,
+      required: true
+    },
+    taskDescription: {
       type: String as PropType<string>,
       required: true
     },
@@ -96,6 +100,15 @@ export default defineComponent({
       }
     },
     editTask() {
+      this.$emit('edit-task', {
+        id: this.taskId,
+        title: this.taskName,
+        description: this.taskDescription,
+        date: this.dueDate,
+        hour: this.dueTime,
+        type: this.taskType,
+        state: this.taskState
+      });
       console.log(`Editing task ${this.taskId}`);
     },
     deleteTask() {
@@ -150,6 +163,7 @@ export default defineComponent({
 
 .pi-pencil, .pi-trash {
   font-size: 20px;
+  cursor: pointer;
 }
 
 .pi-pencil:hover, .pi-trash:hover {

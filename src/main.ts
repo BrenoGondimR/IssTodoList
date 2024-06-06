@@ -24,6 +24,7 @@ import 'primeflex/primeflex.css';
 import 'primevue/resources/themes/aura-light-green/theme.css';
 import 'primevue/resources/primevue.min.css'; /* Deprecated */
 import 'primeicons/primeicons.css';
+import 'primevue/resources/primevue.min.css';
 import PrimeVue from 'primevue/config';
 import AutoComplete from 'primevue/autocomplete';
 import Accordion from 'primevue/accordion';
