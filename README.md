@@ -14,7 +14,7 @@ npm install
 
 ### 🛠️ Compilation and Automatic Reload for Development
 Para iniciar o servidor de desenvolvimento com recarga automática, execute:
-```
+```bash
 npm run serve
 ```
 

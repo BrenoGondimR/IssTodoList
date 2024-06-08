@@ -213,28 +213,42 @@ export default defineComponent({
     },
     formatDate(date: string): string {
       const d = new Date(date);
+      if (isNaN(d.getTime())) {
+        return this.originalDate; // Retorna a data original se a nova data for inválida
+      }
       const day = d.getDate().toString().padStart(2, '0');
       const month = (d.getMonth() + 1).toString().padStart(2, '0');
       const year = d.getFullYear().toString();
       return `${day}/${month}/${year}`;
     },
+
     formatTime(date: string): string {
       const d = new Date(date);
+      if (isNaN(d.getTime())) {
+        return this.originalHour; // Retorna a hora original se a nova hora for inválida
+      }
       const hours = d.getHours().toString().padStart(2, '0');
       const minutes = d.getMinutes().toString().padStart(2, '0');
       return `${hours}:${minutes}`;
     },
     async saveTaskAction() {
       if (this.validateInputs()) {
-        const date = this.inputsModal.find(field => field.key === 'date')!.value || this.originalDate;
-        const hour = this.inputsModal.find(field => field.key === 'hour')!.value || this.originalHour;
+        const dateField = this.inputsModal.find(field => field.key === 'date');
+        const hourField = this.inputsModal.find(field => field.key === 'hour');
+
+        const dateValue = dateField && dateField.value ? dateField.value : this.originalDate;
+        const hourValue = hourField && hourField.value ? hourField.value : this.originalHour;
+
+        // Verifica se a data e a hora são válidas
+        const formattedDate = this.formatDate(dateValue);
+        const formattedHour = this.formatTime(hourValue);
 
         const task: Task = {
           id: this.currentTaskId || Date.now(),
           title: this.inputsModal.find(field => field.key === 'title')!.value,
           description: this.inputsModal.find(field => field.key === 'description')!.value,
-          date: date ? this.formatDate(date) : this.originalDate,
-          hour: hour ? this.formatTime(hour) : this.originalHour,
+          date: formattedDate,
+          hour: formattedHour,
           type: this.inputsModal.find(field => field.key === 'select')!.value.value,
           state: this.editingTask ? this.tasks.find((t: Task) => t.id === this.currentTaskId)?.state || 'todo' : 'todo'
         };
